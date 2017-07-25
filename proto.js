@@ -36,7 +36,7 @@ const layerId = addLayer({
             Math.round(Math.random() * (h / 2) + Math.random() * (h / 2))
         )
     }
-})
+});
 
 console.info('layerId', layerId);
 
