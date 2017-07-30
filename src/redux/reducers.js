@@ -1,16 +1,16 @@
 import {combineReducers} from 'redux';
-// import intro from './intro';
-// import game from './game';
+import game from './game';
 import gfx from './gfx';
+import intro from './intro';
 // import menu from './menu';
-// import ttls from './ttls';
+import ttls from './ttls';
 
 export const rootReducer = combineReducers({
-    // intro,
-    // game,
+    game,
     gfx,
+    intro,
     // menu,
-    // ttls,
+    ttls,
 });
 
 export default rootReducer;
