@@ -1,15 +1,15 @@
-// import { actions as intro } from './intro';
-// import { actions as game } from './game';
+import { actions as game } from './game';
 import { actions as gfx } from './gfx';
+import { actions as intro } from './intro';
 // import { actions as menu } from './menu';
-// import { actions as ttls } from './ttls';
+import { actions as ttls } from './ttls';
 
 export const actions = {
-    // intro,
-    // game,
+    game,
     gfx,
+    intro,
     // menu,
-    // ttls,
+    ttls,
 };
 
 export default actions;
