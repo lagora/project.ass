@@ -1,10 +1,11 @@
 import {reducer} from '../helpers';
-const uuidv4 = require('uuid/v4');
+import {types as intro} from './intro';
+import {types as ttls} from './ttls';
 
 const state = {
-    ctx: undefined,
-    height: -1,
-    layers: [],
+    bottom: -1, ctx: undefined,
+    height: -1, left: 0,
+    obj: [],
     palette: [
         '#000000',
         '#102853',
@@ -21,16 +22,17 @@ const state = {
         '#29ADFF',
         '#83769C',
         '#FF77A8',
-        '#FFCCAA'
+        '#FFCCAA',
+        '#FFFFFF'
     ],
+    right: -1,
+    top: 0,
     width: -1,
 };
 
-const ADD_LAYER = 'ADD_LAYER';
+const GFX_INIT = 'GFX_INIT';
 const INIT = 'INIT';
-const REMOVE_LAYER = 'REMOVELAYER';
 
-const addLayer = layer => (dispatch, getState) => dispatch({type: ADD_LAYER, layers: getState().gfx.layers.concat([{...layer, id: uuidv4()}])}) && Promise.resolve(layer);
 const init = ({width, height}) => dispatch => {
     const tmpCanvas = document.createElement('canvas');
     tmpCanvas.setAttribute('id', 'root');
@@ -43,17 +45,21 @@ const init = ({width, height}) => dispatch => {
     document.querySelector('body').style.margin = '0';
     const ctx = tmpCanvas.getContext('2d');
     
-    dispatch({type: INIT, ctx, height, width});
-    return Promise.resolve({width, height});
+    const bottom = height;
+    const center = {x: width / 2, y: height / 2};
+    const right = width;
+    dispatch({bottom, center, right, type: GFX_INIT, ctx, height, width});
+    return Promise.resolve({ctx, height, palette: state.palette, width});
 };
-const removeLayer = layer => (dispatch, getState) => dispatch({type: REMOVE_LAYER, layers: getState().gfx.layers.filter(({id}) => id !== layer.id)}) && Promise.resolve(layer);
 
-export const actions = {addLayer, init, removeLayer};
+export const actions = {
+    init,
+};
 
 export const mapping = {
-    [INIT]: (state, {ctx, height, width}) => ({...state, ctx, height, width}),
-    [ADD_LAYER]: (state, {layers}) => ({...state, layers}),
-    [REMOVE_LAYER]: (state, {layers}) => ({...state, layers}),
+    [GFX_INIT]: (state, {ctx, height, width}) => ({...state, ctx, height, width}),
+    [intro.INTRO_INIT]: (state, {obj}) => ({...state, obj: state.obj.concat(obj.map(({draw, state}) => ({draw, state})))}),
+    [ttls.TTLS_INIT]: (state, {obj}) => ({...state, obj: state.obj.concat(obj.map(({draw, state}) => ({draw, state})))}),
 };
 
 export default reducer(mapping, state);
