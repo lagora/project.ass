@@ -5,7 +5,7 @@ export const blank = gfx => color => rect(gfx)({color, x: 0, y: 0, w: gfx.width,
 export const color = palette => index => palette[index];
 export const concat = (a, b) => a.concat(b);
 export const copy = (a, b) => (c, d) => a.putImage(b.getImageData(c.x, c.y, c.w, c.h), d.x, d.y);
-export const draw = ({delta, state, time}) => state.gfx.obj.filter(filterState(state)).forEach(({draw}) => draw({delta, gfx: state.gfx, time}));
+export const draw = ({delta, state, time}) => state.gfx.obj.filter(filterState(state)).forEach(({draw}) => draw({delta, gfx: state.gfx, state, time}));
 export const fill = gfx => ({color, x, y, w, h}) => {
     gfx.ctx.fillStyle = color;
     gfx.ctx.fillRect(x, y, w, h);
@@ -20,6 +20,7 @@ export const filterState = ({game}) => ({state}) => state === game.state;
 export const init = (actions, debug) => new Promise(resolve => actions.gfx.init({width: 240, height: 160})
 .then(() => Promise.all(Object.keys(actions).filter(filterGfxInit).filter(filterForInitiable(actions)).map(actionsInit(actions)))
 .then(() => actions.game.setState(debug ? 'ttls' : 'intro'))
+.then(() => actions.menu.init(actions))//DEBUG
 .then(() => resolve())));
 export const merge = (a, b) => ({...a, ...b});
 export const rect = gfx => ({color, h, w, x, y}) => {

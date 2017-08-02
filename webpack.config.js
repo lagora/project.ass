@@ -1,7 +1,7 @@
 var path = require('path');
 var SRC_DIR = path.resolve(__dirname, 'src');
 var DIST_DIR = path.resolve(__dirname, 'dist');
-// var BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+var BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 var config = {
     entry:
@@ -19,15 +19,15 @@ var config = {
             loader: 'babel-loader'
         }]
     },
-    // plugins: [
-    //     new BrowserSyncPlugin({
-    //         host: 'localhost',
-    //         https: false,
-    //         open: false,
-    //         port: 4004,
-    //         server: { baseDir: ['./'] }
-    //     })
-    // ]
+    plugins: [
+        new BrowserSyncPlugin({
+            host: 'localhost',
+            https: false,
+            open: false,
+            port: 4004,
+            server: { baseDir: ['./'] }
+        })
+    ]
 };
 
 module.exports = config;

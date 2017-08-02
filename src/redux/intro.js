@@ -16,7 +16,7 @@ export const init = actions => (dispatch, getState) => {
         obj: [
             {
                 draw: ({ctx, delta, gfx, time}) => soapLogo(gfx)({time}),
-                update: ({actions, delta, state, time}) => time > 5000 && actions.game.setState('ttls'),
+                update: ({actions, delta, state, time}) => time > 5000 && actions.menu.setCursor({cursor: -1, key: 'ttls'}) && actions.game.setState('ttls'),
                 state: 'intro',
             }
         ]
