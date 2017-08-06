@@ -33,7 +33,7 @@ const state = {
 
 const MENU_INIT = 'MENU_INIT';
 const SET_CURSOR = 'SET_CURSOR';
-const SET_ITEMS = 'SET_ITEMS';
+const SET_MENU_ITEMS = 'SET_MENU_ITEMS';
 const SET_STEP = 'SET_STEP';
 
 const TTLS_UP_IS_PRESSED = 'TTLS_UP_IS_PRESSED';
@@ -41,7 +41,7 @@ const TTLS_DOWN_IS_PRESSED = 'TTLS_DOWN_IS_PRESSED';
 const TTLS_VALID_IS_PRESSED = 'TTLS_VALID_IS_PRESSED';
 const TTLS_CANCEL_IS_PRESSED = 'TTLS_CANCEL_IS_PRESSED';
 
-export const types = {MENU_INIT, SET_CURSOR, SET_ITEMS, SET_STEP};
+export const types = {MENU_INIT, SET_CURSOR, SET_MENU_ITEMS, SET_STEP};
 
 export const init = actions => (dispatch, getState) => 
 // console.info('menu', 'init', actions.menu);
@@ -71,7 +71,7 @@ export const update = ({actions, delta, keys, state, time}) => {};
 
 export const setCursor = ({cursor, key}) => dispatch => dispatch({type: SET_CURSOR, cursor, key});
 
-export const setItems = ({items, key}) => dispatch => dispatch({type: SET_ITEMS, items, key});
+export const setItems = ({items, key}) => dispatch => dispatch({type: SET_MENU_ITEMS, items, key});
 
 export const setStep = ({key, step}) => dispatch => dispatch({type: SET_STEP, key, step});
 
@@ -81,7 +81,7 @@ export const mapping = {
     [TTLS_UP_IS_PRESSED]: (state, {is}) => is ? ({...state, cursor: {...state.cursor, ttls: state.cursor.ttls <= 0 ? state.items.ttls.length - 1 : state.cursor.ttls - 1}}) : state,
     [TTLS_DOWN_IS_PRESSED]: (state, {is}) => is ? ({...state, cursor: {...state.cursor, ttls: state.cursor.ttls < 0 || state.cursor.ttls > state.items.ttls.length - 2 ? 0 : state.cursor.ttls + 1 }}) : state,
     [SET_CURSOR]: (state, {cursor, key}) => ({...state, cursor: {...state.cursor, [key]: cursor}}),
-    [SET_ITEMS]: (state, {items, key}) => ({...state, items: {...state.items, [key]: items}}),
+    [SET_MENU_ITEMS]: (state, {items, key}) => ({...state, items: {...state.items, [key]: items}}),
     [SET_STEP]: (state, {key, step}) => ({...state, steps: {...state.steps, [key]: step}}),
 };
 

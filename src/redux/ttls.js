@@ -13,8 +13,6 @@ export const types = {
     TTLS_VALID_IS_PRESSED,
 };
 
-console.info('types', types);
-
 export const init = actions => (dispatch, getState) => {
     const {menu} = getState();
     document.addEventListener('keydown', keydown(dispatch, getState));
