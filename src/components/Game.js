@@ -14,11 +14,9 @@ export const Game = props => {
         actions.game.setState('intro');
     }
     return (
-        <a-scene id="titlescreen" embedded vr-mode-ui="enabled: false">
-            {state === 'intro' ? <Intro actions={actions} duration={6000}/> : 
-            state === 'ttls' ? <Ttls {...ttlsProps}/> : 
-            false}
-        </a-scene>
+        state === 'intro' ? <Intro actions={actions} duration={6000}/> : 
+        state === 'ttls' ? <Ttls {...ttlsProps}/> : 
+        false
     );
 };
 

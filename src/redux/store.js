@@ -1,7 +1,11 @@
 import {applyMiddleware, compose, createStore} from 'redux';
+import throttleActions from 'redux-throttle-actions';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import reducer from './reducers';
+import types from './types';
+
+const throttledActions = throttleActions([types.ttls.SET_CURSOR], 1000);
 
 const composeEnhancers =
   typeof window === 'object' &&
@@ -11,7 +15,7 @@ const composeEnhancers =
     }) : compose;
 
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk, logger),
+  applyMiddleware(throttledActions, thunk, logger),
   // other store enhancers if any
 );
 const store = createStore(reducer, enhancer);

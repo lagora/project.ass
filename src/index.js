@@ -5,7 +5,7 @@ import {render} from 'react-dom';
 import Game from './components/Game';
 import store from './redux/store'; 
 
-// import 'aframe-bmfont-text-component';
+import 'aframe-text-geometry-component';
 
 const run = () => render(
     <Provider store={store}><Game/></Provider>,

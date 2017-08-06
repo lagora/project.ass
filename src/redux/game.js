@@ -13,15 +13,15 @@ const initialState = {
 
 const SET_STATE = 'SET_STATE';
 
-export const setState = newState => (dispatch, getState) => {
-    // const oldState = getState().game.state;
-    // if (!!oldState && getState().menu.cursor[oldState]) {
-    //     bindedActions.menu.setCursor({cursor: -1, key: oldState});
-    // }
-    dispatch({type: SET_STATE, state: newState, time: Date.now()});
+export const nextState = states => (dispatch, getState) => {
+    const {cursor} = getState().ttls;
+    return states[cursor] && dispatch({type: SET_STATE, state: states[cursor].replace(' ', '_').toLowerCase()});
 };
 
-export const actions = {setState};
+export const setState = newState => (dispatch, getState) => 
+dispatch({type: SET_STATE, state: newState, time: Date.now()});
+
+export const actions = {nextState, setState};
 
 export const mapping = {
     [SET_STATE]: (state, action) => ({...state, state: action.state, time: action.time}),
