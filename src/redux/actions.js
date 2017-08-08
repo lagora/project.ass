@@ -1,16 +1,12 @@
 import { actions as game } from './game';
-import { actions as gfx } from './gfx';
-import { actions as intro } from './intro';
-// import { actions as keys } from './keys';
-import { actions as menu } from './menu';
+import { actions as player } from './player';
+import { actions as spaceship } from './spaceship';
 import { actions as ttls } from './ttls';
 
 export const actions = {
     game,
-    gfx,
-    intro,
-    // keys,
-    menu,
+    player,
+    spaceship,
     ttls,
 };
 

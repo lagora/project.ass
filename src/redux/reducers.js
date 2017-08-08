@@ -1,17 +1,13 @@
 import {combineReducers} from 'redux';
 import game from './game';
-import gfx from './gfx';
-import intro from './intro';
-// import keys from './keys';
-import menu from './menu';
+import player from './player';
+import spaceship from './spaceship';
 import ttls from './ttls';
 
 export const rootReducer = combineReducers({
     game,
-    gfx,
-    intro,
-    // keys,
-    menu,
+    player,
+    spaceship,
     ttls,
 });
 

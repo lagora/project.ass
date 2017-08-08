@@ -26,12 +26,18 @@
             "es2015",
             "stage-0",
             "react"
+        ],
+        "plugins": [
+            "transform-decorators-legacy"
         ]
     },
     "dependencies": {
         "aframe": "^0.6.1",
+        "aframe-effects": "^0.5.0",
         "aframe-text-geometry-component": "^0.5.1",
+        "autobind-decorator": "^2.1.0",
         "ava": "^0.21.0",
+        "babel-plugin-transform-decorators-legacy": "^1.3.4",
         "hex-to-hsl": "^1.0.2",
         "most": "^1.5.0",
         "nyc": "^11.0.3",

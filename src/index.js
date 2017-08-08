@@ -6,6 +6,7 @@ import Game from './components/Game';
 import store from './redux/store'; 
 
 import 'aframe-text-geometry-component';
+import 'aframe-effects';
 
 const run = () => render(
     <Provider store={store}><Game/></Provider>,

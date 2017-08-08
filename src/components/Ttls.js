@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import autobind from 'autobind-decorator';
 
 export const filterCursorKey = event => ['ArrowUp', 'ArrowDown'].includes(event.key);
 export const filterValidateKey = event => 'v' === event.key;
@@ -18,6 +19,7 @@ export const mkItem = margin => (text, index) => (
     />
 );
 
+@autobind
 class Ttls extends Component {
     getKeyHandlerArgs() {
         return {actions: this.props.actions, cursor: this.props.ttls.cursor, states: this.props.ttls.items};

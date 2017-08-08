@@ -1,13 +1,10 @@
-import {blank, rect, reducer} from '../helpers';
-import {actions as bindedActions, resetTime} from '../index';
-import {types as intro} from './intro';
-import {types as ttls} from './ttls';
-import {forEach} from 'most';
+import {reducer} from '../helpers';
+import {actions as bindedActions} from '../index';
 
 export const events = ['keydown', 'keyup'];
 
 const initialState = {
-    state: 'ttls',// 'intro',
+    state: 'new_game',// 'ttls',
     mode: 'pixel' // modes: pixel OR vr
 };
 

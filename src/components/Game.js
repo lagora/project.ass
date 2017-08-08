@@ -5,6 +5,7 @@ import actions from '../redux/actions';
 
 import Intro from './Intro';
 import Ttls from './Ttls';
+import Spaceship from './Spaceship';
 
 export const Game = props => {
     const {actions, game} = props;
@@ -16,6 +17,7 @@ export const Game = props => {
     return (
         state === 'intro' ? <Intro actions={actions} duration={6000}/> : 
         state === 'ttls' ? <Ttls {...ttlsProps}/> : 
+        state === 'new_game' ? <Spaceship {...props}/> :
         false
     );
 };
