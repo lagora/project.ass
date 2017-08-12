@@ -8,6 +8,7 @@ import Ttls from './Ttls';
 import Spaceship from './Spaceship';
 
 export const Game = props => {
+    console.info('Game', props);
     const {actions, game} = props;
     const {state} = game;
     const ttlsProps = {...props};
