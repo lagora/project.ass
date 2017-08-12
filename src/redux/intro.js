@@ -1,8 +1,5 @@
-import {
-    blank, color, frame, rect, 
-    reducer, soapLogo, 
-    text
-} from '../helpers';
+// import {reducer} from '../helpers';
+export const reducer = (mapping, initialState) => (state = initialState, action) => action && action.type && mapping[action.type] ? mapping[action.type](state, action) : state;
 
 const state = {};
 

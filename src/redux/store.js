@@ -5,7 +5,7 @@ import logger from 'redux-logger';
 import reducer from './reducers';
 import types from './types';
 
-const throttledActions = throttleActions([types.ttls.SET_CURSOR], 1000);
+// const throttledActions = throttleActions([types.ttls.SET_CURSOR], 1000);
 
 const composeEnhancers =
   typeof window === 'object' &&
@@ -14,8 +14,13 @@ const composeEnhancers =
       // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
     }) : compose;
 
-const enhancer = composeEnhancers(
-  applyMiddleware(throttledActions, thunk, logger),
+const enhancer = 
+// composeEnhancers(
+  applyMiddleware(
+    // throttledActions, 
+    thunk,
+    // logger,
+  // ),
   // other store enhancers if any
 );
 const store = createStore(reducer, enhancer);

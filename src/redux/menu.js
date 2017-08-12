@@ -1,88 +1,77 @@
-import {blank, color, frame, reducer, text} from '../helpers';
+import {extractDirectionFromKey} from '../helpers/spaceship';
+// import {reducer} from '../helpers/index';
+export const reducer = (mapping, initialState) => (state = initialState, action) => action && action.type && mapping[action.type] ? mapping[action.type](state, action) : state;
 
 const state = {
-    cursor: {
-        ttls: -1,
-    },
-    fonts: {
-        size: {
-            ttls: 16,
-        },
-        family: {
-            ttls: 'monospace',
-        }
-    },
+    current: 'main',
+    cursor: 0,
     items: {
-        ttls: [
-            'continue',
-            'new game',
-            'options',
-            // 'exit',
+        main: [
+            'navigation',
+            'jobs',
+            'report',
+            'cargo',
         ],
+        cargo: ['free', 'used', 'total'],
+        jobs: ['current', 'done'],
+        navigation: ['systems'],
+        report: [],
     },
-    margin: {
-        ttls: {y: 16},
+    keys: {
+        main: {
+            'c': 'exit',
+            'v': 'select',
+        },
+        cargo: {
+            'c': 'main',
+        },
+        jobs: {
+            'c': 'main',            
+        },
+        navigation: {
+            'c': 'main',            
+        },
+        report: {
+            'c': 'main',            
+        },
     },
-    offsets: {
-        ttls: {x: 0.4, y: 2 / 3},
-    },
-    steps: {
-        ttls: -1,
+    next: {
+
     },
 };
 
-const MENU_INIT = 'MENU_INIT';
-const SET_CURSOR = 'SET_CURSOR';
-const SET_MENU_ITEMS = 'SET_MENU_ITEMS';
-const SET_STEP = 'SET_STEP';
+const SET_CURSOR = Symbol('Set menu cursor');
+const SET_CURRENT_MENU = Symbol('Set current menu');
 
-const TTLS_UP_IS_PRESSED = 'TTLS_UP_IS_PRESSED';
-const TTLS_DOWN_IS_PRESSED = 'TTLS_DOWN_IS_PRESSED';
-const TTLS_VALID_IS_PRESSED = 'TTLS_VALID_IS_PRESSED';
-const TTLS_CANCEL_IS_PRESSED = 'TTLS_CANCEL_IS_PRESSED';
-
-export const types = {MENU_INIT, SET_CURSOR, SET_MENU_ITEMS, SET_STEP};
-
-export const init = actions => (dispatch, getState) => 
-// console.info('menu', 'init', actions.menu);
-//DEBUG
-actions.menu.setItems({items: state.items.ttls.slice(1), key: 'ttls'});
-
-export const draw = ({ctx, delta, gfx, key, state}) => {
-    const white = color(gfx.palette)(gfx.palette.length - 1);
-    const font = {font: `${state.menu.fonts.size[key]}px ${state.menu.fonts.family[key]}`};
-    const margin = state.menu.margin[key].y;
-    const offset = {
-        x: gfx.width * state.menu.offsets[key].x,
-        y: gfx.height * state.menu.offsets[key].y,
-    };
-    state.menu.items[key].forEach((line, i) => {
-        [
-            {...font, f: text, text: line, x: offset.x, y: offset.y + (i * margin), w: gfx.width},
-        ]
-        .forEach(opts => opts.f(gfx)({...opts, color: white}));
-        if (state.menu.cursor[key] >= 0) {
-            text(gfx)({...font, text: '>', x: offset.x - 16, y: offset.y + state.menu.cursor[key] * state.menu.fonts.size[key]});
-        }
-    });
+export const types = {
+    SET_CURSOR,
+    SET_CURRENT_MENU,
 };
 
-export const update = ({actions, delta, keys, state, time}) => {};
+export const setCursor = ({key}) => (dispatch, getState) => {
+    key = extractDirectionFromKey(key);
+    const {menu} = getState();
+    const {current, cursor} = menu;
+    const items = menu.items[current];
+    let nextCursor = cursor;
+    if (key === 'up') {
+        nextCursor = cursor === 0 ? items.length -1 : cursor - 1;
+    } else if (key === 'down') {
+        nextCursor = cursor < items.length - 1 ? cursor + 1 : 0;
+    }
+    dispatch({type: SET_CURSOR, payload: nextCursor});
+};
 
-export const setCursor = ({cursor, key}) => dispatch => dispatch({type: SET_CURSOR, cursor, key});
+export const setCurrentMenu = () => {
+    // const {''''}
+};
 
-export const setItems = ({items, key}) => dispatch => dispatch({type: SET_MENU_ITEMS, items, key});
-
-export const setStep = ({key, step}) => dispatch => dispatch({type: SET_STEP, key, step});
-
-export const actions = {init, draw, update, setCursor, setItems, setStep};
+export const actions = {
+    setCursor, setCurrentMenu
+};
 
 export const mapping = {
-    [TTLS_UP_IS_PRESSED]: (state, {is}) => is ? ({...state, cursor: {...state.cursor, ttls: state.cursor.ttls <= 0 ? state.items.ttls.length - 1 : state.cursor.ttls - 1}}) : state,
-    [TTLS_DOWN_IS_PRESSED]: (state, {is}) => is ? ({...state, cursor: {...state.cursor, ttls: state.cursor.ttls < 0 || state.cursor.ttls > state.items.ttls.length - 2 ? 0 : state.cursor.ttls + 1 }}) : state,
-    [SET_CURSOR]: (state, {cursor, key}) => ({...state, cursor: {...state.cursor, [key]: cursor}}),
-    [SET_MENU_ITEMS]: (state, {items, key}) => ({...state, items: {...state.items, [key]: items}}),
-    [SET_STEP]: (state, {key, step}) => ({...state, steps: {...state.steps, [key]: step}}),
+    [SET_CURSOR]: (state, {payload}) => ({...state, cursor: payload}),
 };
 
 export default reducer(mapping, state);

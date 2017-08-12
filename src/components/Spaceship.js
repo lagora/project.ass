@@ -4,19 +4,31 @@ import navigation from '../redux/navigation';
 // require('aframe-faceset-component');
 // require('aframe-star-component');
 
+import {
+    xyzToString,
+    extractDirectionFromKey,
+    startWithArrow,
+    includeDirection,
+    filterForUpDownArrowsKeys,
+    filterForOnlyArrowKeys,
+    filterForValidation,
+    filterForCancel,
+    drawMenu,
+} from '../helpers/spaceship';
+
 export const Chair = position => <a-box position={position} height="2"/>
 
-export const Monitor = id => position => rotation =>
-(
-    <a-box
-        id={`${id} Monitor`}
-        position={position}
-        rotation={rotation}
-        width="0.5"
-        depth={depth}
-        material="color: #777"
-    />
-);
+// export const Monitor = id => position => rotation =>
+// (
+//     <a-box
+//         id={`${id} Monitor`}
+//         position={position}
+//         rotation={rotation}
+//         width="0.5"
+//         depth={depth}
+//         material="color: #777"
+//     />
+// );
 
 export const Screen = ({id, src}) => position => rotation =>
 (
@@ -30,38 +42,13 @@ export const Screen = ({id, src}) => position => rotation =>
     />
 );
 
-export const MenuScreen = ({id}) => {
-    return (
-        <a-entity id={id}>
-            {/* {Monitor(id)('0.1 -1.7 -2.5')('-30 -15 0')} */}
-            {Screen({id, src: '#canvas-menu'})('0 1.2 -2')('-30 -15 0')}
-        </a-entity>
-    )
-};
-
-export const xyzToString = ({x, y, z}) => `${x} ${y} ${z}`;
-
-export const extractDirectionFrommKey = key => key.replace('Arrow', '').toLowerCase();
-
-export const startWithArrow = key => key.indexOf('Arrow') === 0;
-
-export const includeDirection = text => ['left', 'right', 'up', 'down'].includes(text);
-
-export const filterForOnlyArrowKeys = key => startWithArrow(key) && includeDirection(extractDirectionFrommKey(key));
-
-export const filterForValidation = key => key === 'v';
-
-export const filterForCancel = key => key === 'c';
-
-export const drawMenu = props => {
-    const canvas = document.querySelector('#canvas-menu');
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#fff';
-    ctx.font = '64px monospace';
-    ctx.fillText(props.spaceship.camera, 8, 64);
-};
+export const MenuScreen = ({id}) => 
+(
+    <a-entity id={id}>
+        {/* {Monitor(id)('0.1 -1.7 -2.5')('-30 -15 0')} */}
+        {Screen({id, src: '#canvas-menu'})('0 1.2 -2')('-30 -15 0')}
+    </a-entity>
+)
 
 @autobind
 class Spaceship extends Component {
@@ -86,12 +73,18 @@ class Spaceship extends Component {
         return this.props.spaceship.camera;
     }
     getNextCamera(direction) {
-        return this.props.spaceship.cameras[this.getCurrentCamera()].next[extractDirectionFrommKey(direction)];
+        return this.props.spaceship.cameras[this.getCurrentCamera()].next[extractDirectionFromKey(direction)];
     }
     handleDirection({key}) {
         if (this.props.spaceship.camera === 'menu') {
             if (filterForCancel(key)) {
                 this.props.actions.spaceship.setCamera('cockpit');
+            }
+            if (filterForValidation(key)) {
+                
+            }
+            if (filterForUpDownArrowsKeys(key)) {
+                this.props.actions.menu.setCursor({key});
             }
         } else 
         if (filterForOnlyArrowKeys(key)) {
@@ -107,7 +100,6 @@ class Spaceship extends Component {
     render() {
         const {spaceship} = this.props;
         const {camera, cameras, previousCamera} = spaceship;
-        console.info('............', 'render', 'Spaceship', camera, previousCamera);
         const cameraProps = {
             position: xyzToString(cameras[spaceship.camera].position),
             rotation: xyzToString(cameras[spaceship.camera].rotation),
