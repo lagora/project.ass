@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import autobind from 'autobind-decorator';
 import navigation from '../redux/navigation';
-import keys from '../../../../../../../Users/Lagora/dev/project.ass/src/redux/keys';
+// require('aframe-faceset-component');
+// require('aframe-star-component');
 
 export const Chair = position => <a-box position={position} height="2"/>
 
@@ -29,20 +30,11 @@ export const Screen = ({id, src}) => position => rotation =>
     />
 );
 
-export const NavigationScreen = id => {
-    return (
-        <a-entity id={id}>
-            {/* {Monitor(id)('0.1 0 -2.5')('30 -15 0')} */}
-            {Screen({id, src: '#canvas-report'})('0 2 -2')('30 -15 0')}
-        </a-entity>
-    )
-};
-
-export const ReportScreen = id => {
+export const MenuScreen = ({id}) => {
     return (
         <a-entity id={id}>
             {/* {Monitor(id)('0.1 -1.7 -2.5')('-30 -15 0')} */}
-            {Screen({id, src: '#canvas-report'})('0 1.2 -2')('-30 -15 0')}
+            {Screen({id, src: '#canvas-menu'})('0 1.2 -2')('-30 -15 0')}
         </a-entity>
     )
 };
@@ -57,30 +49,35 @@ export const includeDirection = text => ['left', 'right', 'up', 'down'].includes
 
 export const filterForOnlyArrowKeys = key => startWithArrow(key) && includeDirection(extractDirectionFrommKey(key));
 
+export const filterForValidation = key => key === 'v';
+
+export const filterForCancel = key => key === 'c';
+
+export const drawMenu = props => {
+    const canvas = document.querySelector('#canvas-menu');
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#fff';
+    ctx.font = '64px monospace';
+    ctx.fillText(props.spaceship.camera, 8, 64);
+};
+
 @autobind
 class Spaceship extends Component {
     componentWillReceiveProps(nextProps) {
         const {camera} = nextProps.spaceship; 
-        console.info('............', 'componentWillReceiveProps', 'Spaceship', camera,
-        document.querySelector('#canvas-report')
-    );
-        this.updateCanvas(camera);
-        // console.info('Spaceship', 'componentWillReceiveProps', nextProps);
+        this.updateCanvas(nextProps);
+        console.info('Spaceship', 'componentWillReceiveProps', camera);
     }
-    updateCanvas(text) {
-        const canvas = document.querySelector('#canvas-report');
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, 160, 120);
-        ctx.fillStyle = '#fff';
-        ctx.font = '12px monospace';
-        ctx.fillText(text, 8, 12);
+    updateCanvas(props) {
+        drawMenu(props);
     }
     componentWillMount() {
         document.addEventListener('keyup', this.handleDirection);
     }
     componentDidMount() {
-        this.updateCanvas(this.props.spaceship.camera);
+        this.updateCanvas(this.props);
     }
     componentWillUnmount() {
         document.removeEventListener('keyup', this.handleDirection);
@@ -92,6 +89,11 @@ class Spaceship extends Component {
         return this.props.spaceship.cameras[this.getCurrentCamera()].next[extractDirectionFrommKey(direction)];
     }
     handleDirection({key}) {
+        if (this.props.spaceship.camera === 'menu') {
+            if (filterForCancel(key)) {
+                this.props.actions.spaceship.setCamera('cockpit');
+            }
+        } else 
         if (filterForOnlyArrowKeys(key)) {
             const nextCamera = this.getNextCamera(key);
             if  (nextCamera) {
@@ -109,8 +111,6 @@ class Spaceship extends Component {
         const cameraProps = {
             position: xyzToString(cameras[spaceship.camera].position),
             rotation: xyzToString(cameras[spaceship.camera].rotation),
-            // fov: cameras[spaceship.camera].fov,
-            // zoom: cameras[spaceship.camera].zoom,
         };
         return (
             <a-scene
@@ -119,40 +119,46 @@ class Spaceship extends Component {
                 vr-mode-ui="enabled: false"
             >
                 <a-assets>
-                    <canvas id="canvas-report" width="160" height="120"/>
-                    <canvas id="canvas-navigation" width="320" height="240"/>
+                    <canvas id="canvas-menu" width="640" height="480"/>
                 </a-assets>
                 <a-box
-                    id="cockpit"
-                    material="side: back; color: #777"
-                    position="0 2.5 0"
-                    width="6" height="5" depth="6"
-                >
-                </a-box>
-                <a-box id="board-front-down" position="2 0.5 0" width="2" height="1" depth="6" material="color: #777"/>
-                
-                <a-box id="board-left-down" position="-1 0.5 -2.75" width="5" height="1" depth="0.5" material="color: #777"/>
-                <a-box id="board-left-up" position="-1 3 -2" width="5" height="1" depth="2" material="color: #777"/>
-                
-                <a-box id="board-right-down" position="-1 0.5 2.75" width="5" height="1" depth="0.5" material="color: #777"/>
-                <a-box id="board-right-up" position="-1 3 2" width="5" height="1" depth="2" material="color: #777"/>
+                    id="cockpit-ground"
+                    position="0 -0.5 0"
+                    width="6" height="1" depth="7" material="color: #777"
+                />
+
+                <a-box
+                    id="cockpit-wall-left"
+                    position="-0.75 0 -3"
+                    width="4.5" height="2" depth="1" material="color: #777"
+                />
+                <a-box
+                    id="cockpit-wall-right"
+                    position="-0.75 0 3"
+                    width="4.5" height="2" depth="1" material="color: #777"
+                />
+
+                <a-box
+                    id="board-front-down"
+                    position="2 0.5 0"
+                    rotation="0 0 -30"
+                    width="2" height="0.75" depth="6" material="color: #777"
+                />
                 
                 <Chair id="captain chair"/>
                 {Chair('0 1 -1')}
-                <ReportScreen id="Report Screen"/>
-                <NavigationScreen id="Navigation Screen"/>
-                {/* <a-box position="0 1.5 0" material="color: red">
-                    <a-animation attribute="rotation"
-                        dur="5000"
-                        from="0 0 0"
-                        to="360 360 0"
-                        direction="alternateReverse"
-                        repeat="indefinite"/>
-                </a-box> */}
+                {Chair('0 1 1')}
+                <MenuScreen id="Menu Screen"/>
                 {camera === previousCamera ? (
-                    <a-camera {...cameraProps} wasd-controls-enabled="false"/>
+                    <a-camera {...cameraProps}
+                        look-controls-enabled="false"
+                        wasd-controls-enabled="false"
+                    />
                 ) : (
-                    <a-camera wasd-controls-enabled="false">
+                    <a-camera
+                        look-controls-enabled="false"
+                        wasd-controls-enabled="false"
+                    >
                         {['position', 'rotation'].map(k => 
                             <a-animation
                                 key={`camera-animation-${k}`}
@@ -163,8 +169,9 @@ class Spaceship extends Component {
                         )}
                     </a-camera>
                 )}
-                <a-sky color="#333">
+                <a-sky color="#000">
                 </a-sky>
+                {/* <a-entity star="points: 23"></a-entity> */}
             </a-scene>
         );
     }
